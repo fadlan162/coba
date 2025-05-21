@@ -29,21 +29,27 @@
     <li class="nav-item">
         <a class="nav-link" href="admin">
             <i class="fas fa-fw fa-table"></i>
-            <span>Data Pengguna</span></a>
+            <span>User</span></a>
     </li>
 
     <!-- Nav Item - problem -->
     <li class="nav-item {{ request()->is('reports') ? 'active' : '' }}">
         <a class="nav-link" href="report">
             <i class="fas fa-fw fa-table"></i>
-            <span>Problem type</span></a>
+            <span>Laporan</span></a>
     </li>
 
     <!-- Nav Item - company -->
     <li class="nav-item">
         <a class="nav-link" href="companie">
             <i class="fas fa-fw fa-table"></i>
-            <span>Company</span></a>
+            <span>Nama Perusahaan</span></a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('problem-types.index') }}">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Tipe Masalah</span></a>
     </li>
     
 

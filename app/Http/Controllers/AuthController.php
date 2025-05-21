@@ -12,7 +12,7 @@ class AuthController extends Controller
     public function login()
     {
         if (Auth::check()) {
-            return back();
+        return redirect('/dashboard');
         }
 
         return view('pages.auth.login');
@@ -21,7 +21,7 @@ class AuthController extends Controller
      public function authenticate(Request $request)
     {
         if (Auth::check()) {
-            return back();
+            return redirect('/dashboard');
         }
         $credentials = $request->validate([
             'email' => ['required', 'email'],
@@ -54,7 +54,7 @@ class AuthController extends Controller
     public function registerView()
     {
         if (Auth::check()) {
-            return back();
+           return redirect('/dashboard');
         }
         return view('pages.auth.register');
     }
@@ -66,8 +66,8 @@ class AuthController extends Controller
         }
         $validated = $request->validate([
             'name' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required'],
+           'email' => ['required', 'email', 'unique:users,email'],
+            'password' => ['required', 'min:6'],
         ]);
 
         $user = new User();
@@ -77,11 +77,16 @@ class AuthController extends Controller
         $user->role_id = 2; // => User
         $user->saveOrFail();
 
-        return redirect('/')->with('succes', 'Berhasil mendaftarkan akun,menunggu persetujuan admin');
+        return redirect('/')->with('success', 'Berhasil mendaftarkan akun, menunggu persetujuan admin');
     }
 
     public function logout(Request $request)
     {  
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+
+        Auth::logout();
  
         $request->session()->invalidate();
  

@@ -4,33 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Models\Reports; 
 use Illuminate\Http\Request;
+use App\Models\Companie;
+use App\Models\ProblemType;
+use App\Models\Admin; // Kalau model user admin namanya Admin
+
 
 class ReportsController extends Controller 
 {
     public function index()
-    {
-        $reports = Reports::all(); 
+{
+    $reports = reports::with(['problemType', 'reporter', 'handler', 'company'])->get();
+    return view('pages.reports.index', compact('reports'));
+}
 
-        return view('pages.reports.index', compact('reports'));
+public function show($id)
+    {
+        // Cari laporan berdasarkan ID
+        $report = Reports::findOrFail($id);
+
+        // Mengembalikan view dengan data laporan
+        return view('reports.show', compact('report'));
     }
+
 
     public function create()
-    {
-        return view('pages.reports.create');
-    }
+{
+    $companies = Companie::all();
+    $problemTypes = ProblemType::all();
+    $admins = Admin::all();
 
+    return view('pages.reports.create', compact('companies', 'problemTypes', 'admins'));
+}
     public function store(Request $request)
 {
     $validated = $request->validate([
-        'tanggal_open'     => ['required', 'date'],
-        'problem_type'     => ['required', 'string', 'max:100'],
-        'report_by'        => ['required', 'string', 'max:100'],
-        'company'          => ['required', 'string', 'max:100'],
-        'detail_problem'   => ['required', 'string'],
-        'handle_by'        => ['required', 'string', 'max:100'],
-        'status'           => ['required', 'in:open,in_progress,closed'],
-        'detail_solution'  => ['nullable', 'string'],
-        'tanggal_close'    => ['nullable', 'date'],
+    'tanggal_open'     => ['required', 'date'],
+    'problem_type_id'  => ['required', 'exists:problem_types,id'],
+    'report_by_id'     => ['required', 'exists:admins,id'],
+    'company_id'       => ['required', 'exists:companies,id'],
+    'detail_problem'   => ['required', 'string'],
+    'handle_by_id'     => ['required', 'exists:admins,id'],
+    'status'           => ['required', 'in:open,in_progress,closed'],
+    'detail_solution'  => ['nullable', 'string'],
+    'tanggal_close'    => ['nullable', 'date'],
     ]);
 
     Reports::create($validated);

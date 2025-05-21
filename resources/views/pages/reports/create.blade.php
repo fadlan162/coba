@@ -1,106 +1,101 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Menampilkan pesan sukses -->
-@if(session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
-@endif
-<!-- Page Heading -->
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Tambah Data Problem Type</h1>
-</div>
+<div class="container">
+    <h1>Tambah Laporan Masalah</h1>
 
-<div class="row justify-content-center">
-    <div class="col-lg-10">
-        <div class="card shadow">
-            <div class="card-body">
-                <form action="/reports/report" method="POST">
-                        @csrf
-                    <div class="form-group">
-                        <label for="tanggal_open">Tanggal Open</label>
-                        <input type="date" name="tanggal_open" class="form-control @error('tanggal_open') is-invalid @enderror" value="{{ old('tanggal_open') }}">
-                        @error('tanggal_open')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="problem_type">Problem Type</label>
-                        <input type="text" name="problem_type" class="form-control @error('problem_type') is-invalid @enderror" value="{{ old('problem_type') }}">
-                        @error('problem_type')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="report_by">Report By</label>
-                        <input type="text" name="report_by" class="form-control @error('report_by') is-invalid @enderror" value="{{ old('report_by') }}">
-                        @error('report_by')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="company">Company</label>
-                        <input type="text" name="company" class="form-control @error('company') is-invalid @enderror" value="{{ old('company') }}">
-                        @error('company')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="detail_problem">Detail Problem</label>
-                        <textarea name="detail_problem" class="form-control @error('detail_problem') is-invalid @enderror">{{ old('detail_problem') }}</textarea>
-                        @error('detail_problem')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="handle_by">Handle By</label>
-                        <input type="text" name="handle_by" class="form-control @error('handle_by') is-invalid @enderror" value="{{ old('handle_by') }}">
-                        @error('handle_by')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="status">Status</label>
-                        <select name="status" class="form-control @error('status') is-invalid @enderror">
-                            <option value="open" {{ old('status') == 'open' ? 'selected' : '' }}>Open</option>
-                            <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                            <option value="closed" {{ old('status') == 'closed' ? 'selected' : '' }}>Closed</option>
-                        </select>
-                        @error('status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="detail_solution">Detail Solution</label>
-                        <textarea name="detail_solution" class="form-control @error('detail_solution') is-invalid @enderror">{{ old('detail_solution') }}</textarea>
-                        @error('detail_solution')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <label for="tanggal_close">Tanggal Close</label>
-                        <input type="date" name="tanggal_close" class="form-control @error('tanggal_close') is-invalid @enderror" value="{{ old('tanggal_close') }}">
-                        @error('tanggal_close')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                        <a href="{{ route('reports.index') }}" class="btn btn-secondary">Kembali</a>
-                    </div>
-                </form>
-            </div>
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
         </div>
-    </div>
+    @endif
+
+    <form action="{{ route('reports.store') }}" method="POST">
+        @csrf
+
+        <div class="mb-3">
+            <label for="tanggal_open" class="form-label">Tanggal Open</label>
+            <input type="date" name="tanggal_open" id="tanggal_open" class="form-control" value="{{ old('tanggal_open') }}" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="problem_type_id" class="form-label">Tipe Masalah</label>
+            <select name="problem_type_id" id="problem_type_id" class="form-select" required>
+                <option value="">-- Pilih Tipe Masalah --</option>
+                @foreach($problemTypes as $type)
+                    <option value="{{ $type->id }}" {{ old('problem_type_id') == $type->id ? 'selected' : '' }}>
+                        {{ $type->nama_problem }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="report_by_id" class="form-label">Report By (Pelapor)</label>
+            <select name="report_by_id" id="report_by_id" class="form-select" required>
+                <option value="">-- Pilih Pelapor --</option>
+                @foreach($admins as $admin)
+                    <option value="{{ $admin->id }}" {{ old('report_by_id') == $admin->id ? 'selected' : '' }}>
+                        {{ $admin->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="company_id" class="form-label">Perusahaan</label>
+            <select name="company_id" id="company_id" class="form-select" required>
+                <option value="">-- Pilih Perusahaan --</option>
+                @foreach($companies as $company)
+                    <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
+                        {{ $company->nama_perusahaan }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="detail_problem" class="form-label">Detail Problem</label>
+            <textarea name="detail_problem" id="detail_problem" class="form-control" required>{{ old('detail_problem') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="handle_by_id" class="form-label">Handle By (Penanggung Jawab)</label>
+            <select name="handle_by_id" id="handle_by_id" class="form-select" required>
+                <option value="">-- Pilih Penanggung Jawab --</option>
+                @foreach($admins as $admin)
+                    <option value="{{ $admin->id }}" {{ old('handle_by_id') == $admin->id ? 'selected' : '' }}>
+                        {{ $admin->name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status" class="form-select" required>
+                <option value="open" {{ old('status') == 'open' ? 'selected' : '' }}>Open</option>
+                <option value="in_progress" {{ old('status') == 'in_progress' ? 'selected' : '' }}>In Progress</option>
+                <option value="closed" {{ old('status') == 'closed' ? 'selected' : '' }}>Closed</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="detail_solution" class="form-label">Detail Solution</label>
+            <textarea name="detail_solution" id="detail_solution" class="form-control">{{ old('detail_solution') }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="tanggal_close" class="form-label">Tanggal Close</label>
+            <input type="date" name="tanggal_close" id="tanggal_close" class="form-control" value="{{ old('tanggal_close') }}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a href="{{ route('reports.index') }}" class="btn btn-secondary">Batal</a>
+    </form>
 </div>
 @endsection

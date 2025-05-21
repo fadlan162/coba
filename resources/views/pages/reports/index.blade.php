@@ -46,14 +46,14 @@
                                 <tr>
                                     <td> {{ $loop->iteration }}</td>
                                     <td>{{ $item->tanggal_open }}</td>
-                                    <td>{{ $item->problem_type }}</td>
-                                    <td>{{ $item->report_by }}</td>
-                                    <td>{{ $item->company }}</td>
+                                    <td>{{ $item->problemType->nama_problem ?? '-' }}</td>
+                                    <td>{{ $item->reporter->name ?? '-' }}</td>
+                                   <td>{{ $item->company->nama_perusahaan ?? '-' }}</td>
                                     <td>{{ $item->detail_problem }}</td>
-                                    <td>{{ $item->handle_by }}</td>
+                                    <td>{{ $item->handler->name ?? '-' }}</td>
                                     <td>{{ $item->status }}</td>
-                                    <td>{{ $item->detail_solution }}</td>
-                                    <td>{{ $item->tanggal_close }}</td>
+                                    <td>{{ $item->detail_solution ?? '-' }}</td>
+                                    <td>{{ $item->tanggal_close ?? '-' }}</td>
                                     <td>
                                         <div class="d-flex gap-2">
                                             <a href="{{ route('reports.edit', $item->id) }}" class="d-inline-block mr-2 btn btn-sm btn-warning">
